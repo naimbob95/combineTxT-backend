@@ -13,7 +13,6 @@ app.get('/', (req, res) => {
 
 app.post("/upload_files", upload.array("files"),uploadFiles);
 
-app.post("/upload_files", upload.array("files"),uploadFiles);
 
 
 

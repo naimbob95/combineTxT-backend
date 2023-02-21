@@ -1,6 +1,8 @@
 var multer = require('multer');
-const {zip} = require('./extract-zip');
 const AdmZip = require("adm-zip");
+const { CombinetxtFile } = require("../controllers/CombineFiles");
+const timestamp = Date.now();
+var fs = require('fs');
 
 
 
@@ -8,28 +10,59 @@ const AdmZip = require("adm-zip");
 
 // Upload file and store as original name
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploaded/') // where files will be saved
-    },
-    filename: function (req, file, cb) {
-      cb(null, Date.now()+"-"+file.originalname) // using the file's original name
-    }
-  })
+  destination: function (req, file, cb) {
+    cb(null, 'tmp/') // where files will be saved
+  },
+  filename: function (req, file, cb) {
+    cb(null, timestamp + "-" + file.originalname) // using the file's original name
+  }
+})
 const upload = multer({ storage: storage })
 
 
-//return the file information after uploaded
+
+
+
 function uploadFiles(req, res) {
-    // console.log(req.body);
-    console.log(req.files);
-    res.json({ message: "Successfully uploaded files" });
-    req.files.forEach((element)=>{
-        const zip = new AdmZip(element.path);
-        zip.extractAllTo("dist");
-    })
+  console.log(req.files);
+ 
+ 
+  req.files.forEach((element) => {
     
+    const directory = "tmp/"+timestamp +"-"+"dist";
+    
+    if (!fs.existsSync(directory)) {
+      fs.mkdirSync(directory);
+    }
+    const zip = new AdmZip(element.path);
+    zip.extractAllTo(directory);
+
+
+    let output = "output/"+timestamp+"-"+"merged.txt";
+    CombinetxtFile(directory, output);
+    
+    if (fs.existsSync(directory)) {
+      fs.rm(directory, {recursive: true}, (error) => {
+        if (error) throw error;
+       
+      });
+      }
+
+      if (fs.existsSync(element.path)) {
+        fs.rm(element.path, {recursive: true}, (error) => {
+          if (error) throw error;
+         
+        });
+        }
+   
+  });
+
+  res.json({ message: "Successfully uploaded files" });
+
 }
 
 
-   
-module.exports = { upload,uploadFiles }
+
+
+
+module.exports = { upload, uploadFiles }
