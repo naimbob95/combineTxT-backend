@@ -37,8 +37,13 @@ function uploadFiles(req, res) {
     const zip = new AdmZip(element.path);
     zip.extractAllTo(directory);
 
+    unwanted_dir = directory+"/__MACOSX";
+    if (fs.existsSync(unwanted_dir)) {
+      fs.rmSync(unwanted_dir, {recursive: true})
+    }
 
-    let output = "output/"+timestamp+"-"+"merged.txt";
+    let random_generator = (Math.random() + 1).toString(36).substring(5);
+    let output = "output/"+timestamp+"-"+"merged"+"-"+random_generator+".txt";
     CombinetxtFile(directory, output);
     
     if (fs.existsSync(directory)) {
