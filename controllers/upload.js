@@ -26,7 +26,8 @@ const upload = multer({ storage: storage })
 function uploadFiles(req, res) {
   console.log(req.files);
  
- 
+  var output_file;
+
   req.files.forEach((element) => {
     
     const directory = "tmp/"+timestamp +"-"+"dist";
@@ -43,7 +44,9 @@ function uploadFiles(req, res) {
     }
 
     let random_generator = (Math.random() + 1).toString(36).substring(5);
-    let output = "output/"+timestamp+"-"+"merged"+"-"+random_generator+".txt";
+    filename = timestamp+"-"+"merged"+"-"+random_generator+".txt"
+    let output = "output/"+filename;
+    output_file = output;
     CombinetxtFile(directory, output);
     
     if (fs.existsSync(directory)) {
@@ -62,7 +65,7 @@ function uploadFiles(req, res) {
    
   });
 
-  res.json({ message: "Successfully uploaded files" });
+  res.json({ output: filename});
 
 }
 
