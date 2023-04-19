@@ -42,7 +42,16 @@ app.delete('/file/:filename', (req, res) => {
   });
 });
 
-app.li
+
+app.post('/deleteAllFiles', (req, res) => {
+  const currentDir = __dirname;
+  const dir = currentDir+'/output/';
+
+  fs.readdirSync(dir).forEach(f => fs.rmSync(`${dir}/${f}`));
+  res.json({Message:'File deleted successfully.'});
+
+});
+
 
 
 app.listen(port, () => {
