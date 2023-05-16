@@ -19,7 +19,8 @@ app.use(function(req, res, next) {
 
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  // res.send('Hello World!');
+   res.json({Message:'Hello World'});
 })
 
 app.post("/upload_files", upload.array("files"),uploadFiles);
